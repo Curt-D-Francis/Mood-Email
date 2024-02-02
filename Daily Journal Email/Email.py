@@ -1,5 +1,10 @@
 import mysql.connector
 from customtkinter import *
+import requests
+#Set up EasyCron API
+headers = {"token" : "2bbb78349ce0d5ca8f18f5721977ef61", "method" : "enable"}
+Enable_api_url = f"https://www.easycron.com/rest/enable?token={headers['token']}&id=7467181"
+EnableCron = requests.get(Enable_api_url, headers=headers)
 #Establish connection to database
 Mood_DB = mysql.connector.connect(
     host = "localhost",
@@ -23,7 +28,7 @@ Moodvalue = []
 #Define What happens in Button click.
 def Btnclick():
     mood_value = IndividualMood.get()
-    Moodvalue.append(mood_value.rstrip('"').lstrip('"'))
+    Moodvalue.append(mood_value.strip('"'))
     try:
         #Establish repeated query and assign mood_value to data
         query = "INSERT INTO moods (Mood) VALUES (%s)"
@@ -32,7 +37,7 @@ def Btnclick():
         #Commit to Database
         Mood_DB.commit()
     except mysql.connector.Error as err:
-        pass
+        print(f"Error:{err}")
     finally:
         app.destroy()
 #Configure Columns
